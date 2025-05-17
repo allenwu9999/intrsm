@@ -1,7 +1,7 @@
 #include <x86intrin.h>
 #include <stdio.h>
 #include <omp.h>
-#include "intrsm_LN_4x4_3_123.h"
+#include "intrsm_LN_4x4_4_1234.h"
 
 void trsm4x4_kernel_4_1234(
     double  *A,
@@ -13,7 +13,7 @@ void trsm4x4_kernel_4_1234(
     // broadcast invA’s 10 nonzero elements into registers
     double inv00 = 1.0 / A[0 * 4 + 0];
     __m256d i00 = _mm256_broadcast_sd(&inv00);
-    // __m256d i10 = _mm256_broadcast_sd(&A[1][0]);
+    // __m256d i10 = _mm256_broadcast_sd(&A[1*4 + 0]);
     double inv11 = 1.0 / A[1 * 4 + 1];
     __m256d i11 = _mm256_broadcast_sd(&inv11);
     // __m256d i20 = _mm256_broadcast_sd(&A[2*4 + 0]);
@@ -44,7 +44,7 @@ void trsm4x4_kernel_4_1234(
         __m256d x2 = _mm256_mul_pd(i22, b2);
 
         // x3 = (b3 - i30*x0 - i31*x1 - i32*x2) / invA[3][3] = (b3 - i31*x1 - i32*x2) * i33
-        __m256d t1 = _mm256_fnmadd_pd(i32, x2, _mm256_fnmadd_pd(i31, x1, b3));
+        __m256d t1 = _mm256_fnmadd_pd(i31, x1, _mm256_fnmadd_pd(i32, x2, b3));
         __m256d x3 = _mm256_mul_pd(i33, t1);
 
         _mm256_storeu_pd(B + 0*ldb + j, x0);

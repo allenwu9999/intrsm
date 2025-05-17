@@ -1,7 +1,7 @@
 #include <x86intrin.h>
 #include <stdio.h>
 #include <omp.h>
-#include "intrsm_LN_4x4_1_1.h"
+#include "intrsm_LN_4x4_2_12.h"
 
 void trsm4x4_kernel_2_12(
     double  *A,
